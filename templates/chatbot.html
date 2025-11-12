@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terrace Gardener Chatbot</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #d7f5e7, #f0f9ff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .chat-container {
+      width: 90%;
+      max-width: 500px;
+      height: 80vh;
+      background: #ffffffdd;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 15px;
+      overflow: hidden;
+      position: relative;
+      transition: margin-bottom 0.3s ease;
+    }
+
+    .exit-btn {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      border: 2px solid #00796b;
+      background-color: white;
+      color: #00796b;
+      font-weight: bold;
+      font-size: 20px;
+      text-align: center;
+      line-height: 30px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .exit-btn:hover {
+      background-color: #00796b;
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .message {
+      padding: 12px 16px;
+      border-radius: 16px;
+      margin-bottom: 10px;
+      max-width: 85%;
+      word-wrap: break-word;
+      line-height: 1.4;
+      animation: fadeIn 0.4s ease-in;
+      font-size: 15px;
+    }
+
+    .bot {
+      background-color: #e1f5fe;
+      align-self: flex-start;
+      color: #000;
+    }
+
+    .user {
+      background-color: #00796b;
+      align-self: flex-end;
+      color: #fff;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .options {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .options button {
+      flex: 1 1 calc(33.33% - 16px);
+      min-width: 100px;
+      margin: 4px;
+      padding: 10px 12px;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      background: #00796b;
+      color: white;
+      transition: background 0.3s, transform 0.2s;
+      font-size: 14px;
+    }
+
+    .options button:hover {
+      background: #004d40;
+      transform: scale(1.05);
+    }
+
+    @media (max-width: 768px) {
+      .chat-container {
+        width: 95%;
+        height: 85vh;
+        border-radius: 16px;
+        margin-bottom: 20%;
+      }
+
+      .message {
+        font-size: 14px;
+        padding: 10px 14px;
+      }
+
+      .options button {
+        flex: 1 1 45%;
+        font-size: 13px;
+        padding: 8px 10px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .options button {
+        flex: 1 1 100%;
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="chat-container" id="chat">
+
+    <div class="exit-btn" onclick="window.location.href='/'">×</div>
+
+    <div class="message bot">👋 Hey Gardener! 🌱</div>
+    <div class="message bot">Which nutrient do you want to boost today?</div>
+
+    <div class="options" id="nutrientOptions">
+      <button onclick="selectNutrient('Nitrogen')">Nitrogen</button>
+      <button onclick="selectNutrient('Phosphorus')">Phosphorus</button>
+      <button onclick="selectNutrient('Potassium')">Potassium</button>
+    </div>
+  </div>
+
+  <script>
+    const chat = document.getElementById("chat");
+
+    function addMessage(text, sender) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", sender);
+      msg.textContent = text;
+      chat.appendChild(msg);
+
+      const maxVisible = 6;
+      const messages = chat.querySelectorAll(".message");
+      if (messages.length > maxVisible) messages[0].remove();
+    }
+
+    function selectNutrient(nutrient) {
+      document.getElementById("nutrientOptions").style.display = "none";
+      addMessage(nutrient, "user");
+
+      setTimeout(() => {
+        addMessage(`How much ${nutrient} do you want to increase?`, "bot");
+
+        const optionsDiv = document.createElement("div");
+        optionsDiv.className = "options";
+        optionsDiv.id = "amountOptions";
+
+        ["10mg", "20mg", "30mg", "40mg", "50mg"].forEach(amount => {
+          const btn = document.createElement("button");
+          btn.textContent = amount;
+          btn.onclick = () => selectAmount(nutrient, amount);
+          optionsDiv.appendChild(btn);
+        });
+
+        chat.appendChild(optionsDiv);
+      }, 800);
+    }
+
+    function selectAmount(nutrient, amount) {
+      document.getElementById("amountOptions").style.display = "none";
+      addMessage(amount, "user");
+
+      setTimeout(() => {
+
+        const solutions = {
+          Nitrogen: [
+            "🌾 Use rice water weekly.",
+            "☕ Add compost tea or a little coffee powder mix.",
+            "🐄 Cow dung slurry works very well.",
+            "🌿 Green leaf compost or moong dal water.",
+            "🌱 Neem cake powder gives steady results."
+          ],
+          Phosphorus: [
+            "🥚 Crushed eggshell or bone meal boosts roots.",
+            "🍌 Banana peel compost is very effective.",
+            "⛰️ Rock phosphate or fish tank water.",
+            "🥜 Groundnut cake water is a great natural booster."
+          ],
+          Potassium: [
+            "🍌 Banana peel water improves flowering.",
+            "🔥 Wood ash adds quick potassium.",
+            "🥥 Coconut water or husk water.",
+            "🥒 Cucumber peel water spray.",
+            "🌾 A pinch of palm jaggery in water."
+          ]
+        };
+
+        const qtyTips = {
+          "10mg": "🪴 Half cup solution is enough.",
+          "20mg": "🌿 One cup weekly.",
+          "30mg": "🌾 One and a half cup every 4–5 days.",
+          "40mg": "🌱 Two cups every 3 days.",
+          "50mg": "💪 Two and a half cups every 2 days — do not overuse!"
+        };
+
+        addMessage(`Here’s how to increase ${nutrient} by ${amount}:`, "bot");
+        addMessage(qtyTips[amount], "bot");
+
+        solutions[nutrient].forEach(tip => addMessage(tip, "bot"));
+
+        setTimeout(() => {
+          addMessage("Would you like to adjust another nutrient?", "bot");
+
+          const restartDiv = document.createElement("div");
+          restartDiv.className = "options";
+          restartDiv.innerHTML =
+            '<button onclick="location.reload()">Yes</button>' +
+            '<button onclick="addMessage(\'No, thank you 🌿\', \'user\')">No</button>';
+
+          chat.appendChild(restartDiv);
+        }, 1000);
+
+      }, 800);
+    }
+  </script>
+</body>
+
+</html>

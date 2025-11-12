@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Analysis & Prediction</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(180deg, #f1f5f9, #e6eef3);
+            min-height: 100vh;
+            color: #0f172a;
+            padding: 36px 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 980px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            width: 100%;
+        }
+
+        .menu-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #0b2545;
+        }
+
+        h1 {
+            font-size: 22px;
+            color: #0b2545;
+        }
+
+        .time {
+            font-size: 12px;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 1), rgba(245, 248, 250, 1));
+            border-radius: 12px;
+            padding: 14px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+            border: 1px solid rgba(11, 37, 69, 0.04);
+        }
+
+        .param {
+            font-weight: 600;
+            color: #0b2545;
+            font-size: 14px;
+        }
+
+        .value-box {
+            background: linear-gradient(135deg, #f0fbf9, #e6f6f8);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-weight: 700;
+            color: #094a44;
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            min-width: 110px;
+            justify-content: center;
+            box-shadow: 0 6px 14px rgba(3, 78, 79, 0.06);
+        }
+
+        .unit {
+            font-size: 12px;
+            color: #165a52;
+            opacity: 0.9;
+            font-weight: 600;
+        }
+
+        .btn-center {
+            display: flex;
+            justify-content: center;
+            margin-top: 60px;
+        }
+
+        .btn {
+            background: #0f172a;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 8px 20px rgba(2, 6, 23, 0.08);
+            text-decoration: none;
+        }
+
+        /* Analysis Page Specific Styles */
+        .analysis-card {
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
+        }
+
+        .analysis-card h2 {
+            color: #065f46;
+            margin-bottom: 16px;
+        }
+
+        .analysis-card pre {
+            white-space: pre-wrap;
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* Side Menu Styling... (keep the existing styles for consistency) */
+        .side-menu {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: linear-gradient(180deg, #ffffff, #f8fafc);
+            overflow-x: hidden;
+            transition: width 0.35s ease, box-shadow 0.35s ease;
+            box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+            z-index: 1000;
+            padding-top: 60px;
+        }
+
+        .side-menu.open {
+            width: 260px;
+            box-shadow: 4px 0 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .side-menu a {
+            padding: 14px 22px;
+            text-decoration: none;
+            font-size: 15px;
+            color: #0b2545;
+            display: block;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.25s ease;
+            opacity: 0;
+            transform: translateX(-10px);
+            pointer-events: none;
+        }
+
+        .side-menu.open a {
+            opacity: 1;
+            transform: translateX(0);
+            pointer-events: auto;
+        }
+
+        .side-menu.open a:nth-child(1) {
+            transition: opacity 0.35s ease 0.05s, transform 0.35s ease 0.05s;
+        }
+
+        .side-menu.open a:nth-child(2) {
+            transition: opacity 0.35s ease 0.10s, transform 0.35s ease 0.10s;
+        }
+
+        .side-menu.open a:nth-child(3) {
+            transition: opacity 0.35s ease 0.15s, transform 0.35s ease 0.15s;
+        }
+
+        .side-menu a::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(0, 200, 200, 0.05), rgba(0, 200, 200, 0.15));
+            transition: left 0.3s ease;
+        }
+
+        .side-menu a:hover::before {
+            left: 0;
+        }
+
+        .side-menu a:hover {
+            color: #065f46;
+            padding-left: 28px;
+        }
+
+        .side-menu .close-btn {
+            position: absolute;
+            top: 12px;
+            right: 18px;
+            font-size: 22px;
+            cursor: pointer;
+            color: #0b2545;
+            transition: transform 0.2s ease, color 0.2s ease;
+        }
+
+        .side-menu .close-btn:hover {
+            transform: rotate(90deg);
+            color: #065f46;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+        }
+
+        .gemini-loader {
+            text-align: center;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .gemini-loader .circle {
+            width: 18px;
+            height: 18px;
+            background-color: #00e6b8;
+            border-radius: 50%;
+            display: inline-block;
+            margin: 6px;
+            animation: bounce 1.2s infinite ease-in-out;
+        }
+
+        .gemini-loader .circle:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .gemini-loader .circle:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            80%,
+            100% {
+                transform: scale(0);
+            }
+
+            40% {
+                transform: scale(1);
+            }
+        }
+
+        .gemini-loader p {
+            margin-top: 15px;
+            font-size: 18px;
+            letter-spacing: 1px;
+            animation: fadeText 2s infinite;
+        }
+
+        @keyframes fadeText {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="sideMenu" class="side-menu">
+        <span class="close-btn" onclick="closeMenu()">&times;</span>
+        <a href="{{ url_for('analysis') }}">Analyse and Prediction</a>
+        <a href="{{ url_for('user_specific_crop') }}">User-Specific Crop</a>
+        <a href="{{ url_for('continuous_monitoring') }}">24/7 Monitoring</a>
+        <a href="{{ url_for('chatbot') }}">🌿Chatbot</a>
+    </div>
+
+    <div class="container" id="mainContent">
+        <header>
+            <button class="menu-btn" onclick="openMenu()"><i class="fas fa-bars"></i></button>
+            <h1 style="margin-left: 10px;">🧠 Soil Analysis</h1>
+            <div class="time">
+                Last updated: {{ data.timestamp }}
+                <a href="{{ url_for('analysis') }}" class="refresh-btn"><i class="fas fa-sync-alt"></i></a>
+            </div>
+        </header>
+
+
+
+        <br>
+        <div class="analysis-card">
+            <h2>AI-Powered Crop Recommendation</h2>
+            <pre>{{ recommendation }}</pre>
+        </div>
+
+        <div class="btn-center">
+            <a href="{{ url_for('index') }}" class="btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+            <a href="{{ url_for('download_analysis_pdf') }}" class="btn" style="margin-left: 15px;">
+                <i class="fas fa-file-pdf"></i> Download AI Report
+            </a>
+        </div>
+    </div>
+
+    <script>
+        function openMenu() {
+            document.getElementById("sideMenu").classList.add("open");
+        }
+        function closeMenu() {
+            document.getElementById("sideMenu").classList.remove("open");
+        }
+        document.querySelector('a[href="{{ url_for("analysis") }}"]').addEventListener('click', function (e) {
+            // Show loader immediately
+            document.getElementById("loadingOverlay").style.display = "flex";
+        });
+    </script>
+</body>
+
+</html>
